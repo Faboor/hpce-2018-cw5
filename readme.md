@@ -149,41 +149,47 @@ Performance metric
 ==================
 
 Performance is defined in terms of the number of puzzles of increasing scale
-executed within a fixed time budget. The time budget is fixed at $t_B=60$ seconds
+executed within a fixed time budget. The time budget is fixed at ![t_B=60](https://latex.codecogs.com/svg.latex?t_B=60) seconds
 for each puzzle, and the budget includes the entirety of `Puzzle::Execute`.
 
 The sequence of scales is determined according to a schedule for each puzzle,
-which maps an index $i>=1$ to a sequence of scales $s_1,s_2,s_3,...$. The
-scale schedule is intended to match the inherent scaling properties of each puzzle,
+which maps an index ![i>=1](https://latex.codecogs.com/svg.latex?i>=1) to a sequence
+of scales ![s_1,s_2,s_3,...](https://latex.codecogs.com/svg.latex?s_1,s_2,s_3,\dots).
+The scale schedule is intended to match the inherent scaling properties of each puzzle,
 and balances some exploration of smaller scales, while also
 allowing faster implementations to push up to larger scales. The sequence
-as given is defined ising a random term $U$ to make it non-deterministic;
+as given is defined ising a random term ![U](https://latex.codecogs.com/svg.latex?U) to make it non-deterministic;
 so it is possible to work out what the sequence looks like, but not the precise numbers
-(to avoid over-fitting). $U$ is a uniform random number in the range $[0,1)$.
+(to avoid over-fitting). ![U](https://latex.codecogs.com/svg.latex?U) is a uniform random number in the range
+![[0,1)](https://latex.codecogs.com/svg.latex?[0,1))
 For assessment purposes, the sequence of input scales
 and actual inputs for a given puzzle will be identical across all submissions.
 
 To create a continuous metric, the puzzle which is executing when the timer expires
 will be added pro-rata based on "how far" it had got through. If we have a sequence
-of scales $s_1, s_2, s_3, ...$ and an implementation which takes $f(s)$ seconds at
-scale $s$, then the puzzles in the sequence will complete at $t_j = \sum_{i=1}^{j} f(i)$.
-The sequence of complete times $t_1,t_2,t_3, ... t_{n},t_{n+1}$, will eventually
-exceed the time budget $t_B$ at some point $n$, which occurs when $t_{n} <= t_B < t_{n+1}$.
-We consider $n$ puzzles to be completed, and $(t_B-t_{n})/(t_{n+1}-t_{n})$ of the
-final puzzle to have been completed, for a final metric of:
-```
-n+(t_B-t_{n})/(t_{n+1}-t_{n})
-```
+of scales ![s_1, s_2, s_3, ...](https://latex.codecogs.com/svg.latex?s_1,s_2,s_3,\dots)
+and an implementation which takes ![f(s)](https://latex.codecogs.com/svg.latex?f(s)) seconds at
+scale ![s](https://latex.codecogs.com/svg.latex?s), then the puzzles in the sequence will
+complete at ![t_j = \sum_{i=1}^{j} f(i)](https://latex.codecogs.com/svg.latex?\inline%20t_j=\sum_{i=1}^{j}f(i)).
+The sequence of complete times ![t_1,t_2,t_3, ... t_{n},t_{n+1}](https://latex.codecogs.com/svg.latex?t_1,t_2,t_3,\dots,t_{n},t_{n+1}), will eventually exceed the time budget ![t_B](https://latex.codecogs.com/svg.latex?t_B) at some point
+![n](https://latex.codecogs.com/svg.latex?n), which occurs when ![t_{n} <= t_B < t_{n+1}](https://latex.codecogs.com/svg.latex?t_n<=t_B<t_{n+1}).
+We consider ![n](https://latex.codecogs.com/svg.latex?n) puzzles to be completed, and
+![(t_B-t_{n})/(t_{n+1}-t_{n})](https://latex.codecogs.com/svg.latex?(t_B-t_{n})/(t_{n+1}-t_{n}))
+of the final puzzle to have been completed, for a final metric of:
+
+![n+(t_B-t_{n})/(t_{n+1}-t_{n})](https://latex.codecogs.com/svg.latex?n+(t_B-t_{n})/(t_{n+1}-t_{n}))
+
 In order to manage execution time in assessment (e.g. in the case of an infinite loop),
-if $1.5*t_B < t_{n+1}$ then we assume that $t_{n+1} = \infty$. Practically speaking
-this means that if $t_B=60$ then the timeout for the final puzzle is 90 seconds.
+if ![1.5*t_B < t_{n+1}](https://latex.codecogs.com/svg.latex?1.5*t_B<t_n{n+1}) then we assume that
+![t_{n+1} = \infty](https://latex.codecogs.com/svg.latex?t_{n+1}=\infty). Practically speaking
+this means that if ![t_B=60](https://latex.codecogs.com/svg.latex?t_B=60) then the timeout for the final puzzle is 90 seconds.
 
 | Puzzle      | Sequence             | Reference   | Competent  | Expert   |
 |-------------|----------------------|-------------|------------|----------|
-| rank        | `50+(i*50+U*20)^2`   | 43.3910     | 44.7968    | 60.0788  |
-| decompose   | `20+(i*30+U*10)^1.2` | 15.7040     | 27.2232    | 38.1773  |
-| ising       | `20+(i*20+U*5)`      | 18.5639     | 18.7988    | 35.9099  |
-| integral    | `20+(i*20+U*5)`      | 23.2298     | 37.3449    | 170.683  |
+| rank        | ![50+(i*50+U*20)^2](https://latex.codecogs.com/svg.latex?50+(i*50+U*20)^2)   | 43.3910     | 44.7968    | 60.0788  |
+| decompose   | ![20+(i*30+U*10)^1.2](https://latex.codecogs.com/svg.latex?20+(i*30+U*10)^{1.2}) | 15.7040     | 27.2232    | 38.1773  |
+| ising       | ![20+(i*20+U*5)](https://latex.codecogs.com/svg.latex?20+(i*20+U*5))      | 18.5639     | 18.7988    | 35.9099  |
+| integral    | ![20+(i*20+U*5)](https://latex.codecogs.com/svg.latex?20+(i*20+U*5))      | 23.2298     | 37.3449    | 170.683  |
 
 The expert observed that they weren't at the limits of performance on
 any puzzle, only of implementation time, so if you end up with higher
